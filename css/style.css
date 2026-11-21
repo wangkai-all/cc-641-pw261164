@@ -1,0 +1,375 @@
+/* 页面样式：色板与 palette.md 参考实例一致，明暗两套由 data-theme / 系统偏好切换 */
+
+:root {
+  color-scheme: light;
+  --surface-1: #fcfcfb;
+  --page: #f9f9f7;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --baseline: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.10);
+  --s1: #2a78d6;
+  --s2: #eb6834;
+  --good: #0ca30c;
+  --good-ink: #006300;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+  --warn-bg: rgba(250, 178, 25, 0.12);
+  --serious-bg: rgba(236, 131, 90, 0.12);
+  --critical-bg: rgba(211, 59, 59, 0.10);
+  --good-bg: rgba(12, 163, 12, 0.10);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --surface-1: #1a1a19;
+    --page: #0d0d0d;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --baseline: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --s1: #3987e5;
+    --s2: #d95926;
+    --good-ink: #0ca30c;
+    --warn-bg: rgba(250, 178, 25, 0.14);
+    --serious-bg: rgba(236, 131, 90, 0.14);
+    --critical-bg: rgba(230, 103, 103, 0.12);
+    --good-bg: rgba(12, 163, 12, 0.14);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-1: #1a1a19;
+  --page: #0d0d0d;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --muted: #898781;
+  --grid: #2c2c2a;
+  --baseline: #383835;
+  --border: rgba(255, 255, 255, 0.10);
+  --s1: #3987e5;
+  --s2: #d95926;
+  --good-ink: #0ca30c;
+  --warn-bg: rgba(250, 178, 25, 0.14);
+  --serious-bg: rgba(236, 131, 90, 0.14);
+  --critical-bg: rgba(230, 103, 103, 0.12);
+  --good-bg: rgba(12, 163, 12, 0.14);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 20px 20px 48px;
+}
+
+/* 头部 */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.app-header h1 {
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+.subtitle {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+/* 控制行 */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: center;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.tool-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.tool-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+.dataset-label {
+  color: var(--ink-2);
+  font-size: 13px;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tool-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tool-note {
+  margin: 6px 2px 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn:hover { background: var(--grid); }
+.btn-primary {
+  background: var(--s1);
+  border-color: var(--s1);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--s1); filter: brightness(1.08); }
+.file-btn { display: inline-block; }
+.btn-row { display: flex; gap: 8px; margin-bottom: 10px; }
+
+.num-input {
+  width: 76px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-1);
+  color: var(--ink);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.slider { width: 140px; accent-color: var(--s1); }
+.slider-value {
+  min-width: 64px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 卡片 */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.card h2 {
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hint {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin: 8px 0 0;
+}
+
+/* 图例 */
+.legend { display: flex; flex-wrap: wrap; gap: 12px; }
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.legend-ring {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: inline-block;
+}
+
+/* 图表 */
+.chart { width: 100%; height: auto; display: block; }
+.chart-small { max-width: 520px; }
+.chart .tick {
+  fill: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.chart .axis-title {
+  fill: var(--muted);
+  font-size: 11.5px;
+}
+.chart .cutoff-label {
+  fill: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.chart .bucket-flag { font-size: 11px; fill: var(--warning); }
+.chart .bucket-bar { cursor: pointer; }
+.chart .range-handle { cursor: ew-resize; }
+
+/* 悬停提示 */
+.chart-tooltip {
+  position: fixed;
+  z-index: 50;
+  background: var(--surface-1);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  max-width: 280px;
+}
+.tt-row { display: flex; align-items: baseline; gap: 6px; }
+.tt-row strong { font-variant-numeric: tabular-nums; }
+.tt-row span { color: var(--ink-2); }
+.tt-swatch {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  align-self: center;
+}
+
+/* 估计面板 */
+.estimate-grid {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.hero-value {
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.hero-label {
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.est-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px 24px;
+  flex: 1;
+  min-width: 260px;
+}
+.fact-label { color: var(--muted); font-size: 12.5px; }
+.fact-value { font-size: 15px; font-variant-numeric: tabular-nums; }
+.interpretation { margin: 10px 0 6px; }
+.scope-note {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--warning);
+  background: var(--warn-bg);
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+/* 提示框 */
+.alert {
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 13.5px;
+  border: 1px solid var(--border);
+}
+.alert-title { font-weight: 600; margin-bottom: 4px; }
+.alert p { margin: 4px 0; }
+.alert ul { margin: 6px 0 0; padding-left: 20px; }
+.alert-warning { background: var(--warn-bg); border-left: 3px solid var(--warning); }
+.alert-serious { background: var(--serious-bg); border-left: 3px solid var(--serious); }
+.alert-critical { background: var(--critical-bg); border-left: 3px solid var(--critical); }
+
+/* 诊断提示 */
+#warnings { margin-bottom: 10px; }
+.warn-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 7px 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.warn-warning { background: var(--warn-bg); }
+.warn-good { background: var(--good-bg); }
+.warn-icon { font-weight: 700; }
+.warn-warning .warn-icon { color: var(--serious); }
+.warn-good .warn-icon { color: var(--good); }
+
+/* 表格 */
+.table-scroll { overflow-x: auto; }
+.table-scroll-short { max-height: 260px; overflow-y: auto; }
+.data-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+  margin-top: 8px;
+}
+.data-table th, .data-table td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--grid);
+  white-space: nowrap;
+}
+.data-table th {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 12.5px;
+}
+.data-table td { font-variant-numeric: tabular-nums; }
+.data-table.clickable tbody tr { cursor: pointer; }
+.data-table.clickable tbody tr:hover { background: var(--grid); }
+.data-table tr.row-selected { background: var(--grid); }
+.snap-empty { color: var(--muted); padding: 8px 0; }
+
+/* 页脚 */
+.app-footer {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-top: 8px;
+}
+
+summary { cursor: pointer; color: var(--ink-2); }
+details summary { margin: 4px 0; }

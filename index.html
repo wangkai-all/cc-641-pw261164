@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>补贴申请断点回归分析</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="page">
+
+  <header class="app-header">
+    <div>
+      <h1>补贴申请断点回归分析</h1>
+      <p class="subtitle">按固定评分门槛比较两侧申请的后续产出 · 所有结论均为门槛附近的局部估计</p>
+    </div>
+    <button id="themeToggle" class="btn" type="button">深色模式</button>
+  </header>
+
+  <!-- 控制行：作用于下方所有图表与表格 -->
+  <div class="toolbar">
+    <div class="tool-group">
+      <span class="tool-label">数据</span>
+      <span id="datasetLabel" class="dataset-label"></span>
+      <input id="seedInput" type="number" min="1" step="1" class="num-input" title="随机种子">
+      <button id="btnRegen" class="btn" type="button">重新生成虚构数据</button>
+      <button id="btnDownloadCsv" class="btn" type="button">下载 CSV</button>
+      <label class="btn file-btn">导入 CSV
+        <input id="fileInput" type="file" accept=".csv,text/csv" hidden>
+      </label>
+    </div>
+    <div class="tool-group">
+      <label class="tool-field">门槛（分）
+        <input id="cutoffInput" type="number" step="1" class="num-input">
+      </label>
+      <label class="tool-field">分析范围
+        <input id="hSlider" type="range" class="slider">
+        <span id="hValue" class="slider-value"></span>
+      </label>
+      <label class="tool-field">贴门槛排除
+        <input id="donutSlider" type="range" class="slider">
+        <span id="donutValue" class="slider-value"></span>
+      </label>
+    </div>
+  </div>
+  <p class="tool-note">分析范围与排除带对门槛两侧<strong>对称</strong>生效，不能为某一侧单独选择；保留/排除只由评分决定，评分相同的申请始终一起保留或一起排除。</p>
+
+  <div id="importErrors" class="alert alert-critical" hidden></div>
+
+  <section id="sharpAlert" class="alert alert-warning" hidden>
+    <div class="alert-title">⚠ 执行偏差：获补贴未严格按门槛执行</div>
+    <p id="sharpAlertText"></p>
+    <details>
+      <summary>查看例外明细</summary>
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>编号</th><th>评分</th><th>实际获补贴</th><th>偏差类型</th></tr></thead>
+          <tbody id="sharpExceptions"></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>门槛附近散点与两侧局部线性拟合</h2>
+      <div id="mainLegend" class="legend"></div>
+    </div>
+    <svg id="mainChart" class="chart" role="img" aria-label="门槛附近后续产出散点与两侧局部线性拟合"></svg>
+    <p class="hint">拖动图中两侧的方形把手（或上方滑块）调整分析范围；黄色带为贴门槛排除区。悬停散点可查看单条申请。</p>
+  </section>
+
+  <section class="card">
+    <h2>门槛处两侧差距</h2>
+    <div class="estimate-grid">
+      <div class="hero">
+        <div class="hero-value" id="estTau">—</div>
+        <div class="hero-label" id="estTauLabel">两侧差距（后续产出，万元）</div>
+      </div>
+      <div class="est-facts" id="estFacts"></div>
+    </div>
+    <div id="estProblems" class="alert alert-serious" hidden></div>
+    <p id="interpretation" class="interpretation"></p>
+    <p id="scopeNote" class="scope-note"></p>
+  </section>
+
+  <section class="card">
+    <h2>差距随分析范围的变化</h2>
+    <svg id="sensChart" class="chart chart-small" role="img" aria-label="两侧差距随分析范围变化的曲线"></svg>
+    <details>
+      <summary>敏感性数据表</summary>
+      <div class="table-scroll table-scroll-short">
+        <table id="sensTable" class="data-table"></table>
+      </div>
+    </details>
+  </section>
+
+  <section class="card">
+    <h2>数据诊断：评分分布与原有属性</h2>
+    <div id="warnings"></div>
+    <svg id="histChart" class="chart" role="img" aria-label="评分桶人数直方图"></svg>
+    <p class="hint">点击柱或下表行，可核对桶内申请明细与拟合权重。⚠ 表示人数异常集中的桶。</p>
+    <div class="table-scroll">
+      <table id="bucketTable" class="data-table clickable"></table>
+    </div>
+  </section>
+
+  <section class="card" id="drilldownCard" hidden>
+    <h2 id="drillTitle"></h2>
+    <p id="drillNote" class="hint"></p>
+    <div class="table-scroll">
+      <table id="drillTable" class="data-table"></table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>保存的结果</h2>
+    <p class="hint">保存内容包含观察范围与排除规则；所有结果均为门槛附近的局部估计，不适用于所有申请。</p>
+    <div class="btn-row">
+      <button id="btnSave" class="btn btn-primary" type="button">保存当前结果</button>
+      <button id="btnExport" class="btn" type="button">导出 JSON</button>
+      <button id="btnClear" class="btn" type="button">清空</button>
+    </div>
+    <div class="table-scroll">
+      <table id="snapTable" class="data-table"></table>
+    </div>
+  </section>
+
+  <details class="card">
+    <summary>全部申请数据</summary>
+    <div class="table-scroll">
+      <table id="fullTable" class="data-table"></table>
+    </div>
+  </details>
+
+  <footer class="app-footer">
+    <p>方法：以固定评分为门槛的断点回归（RDD）。两侧分别做三角核加权的局部线性拟合，取门槛处截距之差；
+    标准误为 HC1 稳健标准误。评分为虚构数据，仅用于演示。</p>
+  </footer>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/data.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
